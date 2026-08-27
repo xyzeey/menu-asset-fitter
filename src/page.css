@@ -1,0 +1,436 @@
+/* 이 페이지 전용 규칙. 색·타입·모서리·그림자는 전부 XDS 토큰에서 가져온다.
+   라이트 전용 — XDS 다크 토큰은 쓰지 않는다. */
+
+*, *::before, *::after { box-sizing: border-box; }
+figure { margin: 0; }
+
+body {
+  margin: 0;
+  background: var(--semantic-background-normal-alternative);
+  color: var(--semantic-label-gray-primary);
+}
+
+/* XDS 는 Pretendard 하나로 간다. 자릿수만 고정폭으로 맞춘다. */
+.specfig figcaption,
+.tile .n,
+.bar .out,
+.name,
+.facts,
+.dock .status b {
+  font-variant-numeric: tabular-nums;
+}
+
+.wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 56px 20px 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---------- 머리 ---------- */
+
+.masthead {
+  display: flex;
+  gap: 24px 32px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--color-cool-neutral-80);   /* divider · solid secondary */
+}
+
+h1 {
+  flex: 1 1 260px;
+  min-width: 0;
+  margin: 0;
+  font-size: clamp(var(--type-title-1-size), 4.4vw, var(--type-headline-2-size));
+  line-height: var(--type-headline-2-lh);
+  font-weight: var(--type-headline-2-weight);
+  letter-spacing: -0.02em;
+}
+
+/* 미리보기 바탕과 그 위에 그리는 점선. 점선은 JS(paint)에서도 읽어 쓴다. */
+:root {
+  --stage: var(--color-cool-neutral-10);
+  --stage-line: var(--color-cool-neutral-60);
+}
+
+/* 규격 그림 — 에셋이 실제로 얹히는 바탕 위에 그린다 */
+.specfig {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: var(--radius-8);
+  background: var(--stage);
+}
+.specfig figcaption {
+  font-size: var(--type-caption-size);
+  line-height: 1.9;
+  color: var(--color-cool-neutral-70);
+}
+.specfig figcaption b {
+  color: var(--semantic-static-white);
+  font-weight: 600;
+}
+
+/* ---------- 넣는 곳 ---------- */
+
+/* upload-dragger (node 3866:106581) — 점선이 아니라 실선 1px, radius 2 */
+#drop {
+  padding: var(--space-4) var(--space-5);
+  text-align: center;
+  border: 1px solid var(--color-cool-neutral-80);
+  border-radius: var(--radius-2);
+  background: var(--color-cool-neutral-98);
+  cursor: pointer;
+  transition: border-color .14s, background .14s;
+}
+#drop:hover,
+#drop:focus-visible,
+#drop.on {
+  border-color: var(--color-blue-60);
+  background: var(--color-blue-98);
+}
+#drop strong {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+}
+#drop span {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--semantic-label-gray-alternative);
+}
+
+/* ---------- 조작부 ---------- */
+
+.panel {
+  border: 1px solid var(--semantic-border-normal);
+  border-radius: var(--radius-4);
+  background: var(--semantic-background-elevated-normal);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: center;
+  padding: 14px 16px;
+}
+.bar .field { display: flex; align-items: baseline; gap: 10px; }
+.bar label {
+  font-size: var(--type-detail-1-size);
+  line-height: var(--type-detail-1-lh);
+  color: var(--semantic-label-gray-alternative);
+}
+.bar .out {
+  font-size: var(--type-body-4-size);
+  line-height: var(--type-body-4-lh);
+  font-weight: 600;
+  color: var(--semantic-label-gray-primary);
+}
+.bar .spacer { flex: 1; }
+
+/* checkbox (node 110:34661) — 20x20 상자, radius 4, 글자와 8px 띄움 */
+.cbx {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+.cbx input {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.cbx-box {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--color-cool-neutral-90);
+  background-color: var(--color-common-white);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px 14px;
+  transition: background-color .12s, border-color .12s;
+}
+.cbx input:checked + .cbx-box {
+  border-color: var(--color-blue-60);
+  background-color: var(--color-blue-60);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M2.5 7.3 5.6 10.4 11.5 4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.cbx input:focus-visible + .cbx-box {
+  outline: 2px solid var(--color-blue-60);
+  outline-offset: 2px;
+}
+.cbx-label {
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--semantic-label-gray-primary);
+}
+
+/* 상태 글자색 — XDS static/accent 는 흰 바탕에서 대비가 2~3 밖에 안 나와
+   글자로 쓸 수 없다. 색선·칠에는 semantic 을 쓰고 글자만 아래 단계로 내린다. */
+:root {
+  --state-ok-text:   var(--color-green-20);
+  --state-warn-text: var(--color-orange-30);
+  --state-bad-text:  var(--color-red-40);
+}
+
+/* ---------- 요약 ---------- */
+
+.tally { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.tile {
+  flex: 1 1 130px;
+  padding: 12px 14px;
+  border: 1px solid var(--semantic-border-normal);
+  border-left: 3px solid var(--semantic-components-fill-normal);
+  border-radius: var(--radius-4);
+  background: var(--semantic-background-elevated-normal);
+}
+.tile.ok   { border-left-color: var(--semantic-accent-green); }
+.tile.warn { border-left-color: var(--semantic-static-caution); }
+.tile.bad  { border-left-color: var(--semantic-static-error); }
+
+.tile .n {
+  font-size: var(--type-title-3-size);
+  line-height: 1.25;
+  font-weight: var(--type-title-3-weight);
+}
+.tile.ok .n   { color: var(--state-ok-text); }
+.tile.warn .n { color: var(--state-warn-text); }
+.tile.bad .n  { color: var(--state-bad-text); }
+
+.tile .k {
+  font-size: var(--type-detail-1-size);
+  line-height: var(--type-detail-1-lh);
+  color: var(--semantic-label-gray-alternative);
+}
+
+/* ---------- 목록 ---------- */
+
+#list { display: flex; flex-direction: column; gap: 8px; }
+
+.card {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid var(--semantic-border-normal);
+  border-left: 3px solid var(--semantic-components-fill-normal);
+  border-radius: var(--radius-4);
+  background: var(--semantic-background-elevated-normal);
+}
+.card.ok   { border-left-color: var(--semantic-accent-green); }
+.card.warn { border-left-color: var(--semantic-static-caution); }
+.card.bad  { border-left-color: var(--semantic-static-error); }
+
+.stage {
+  flex: 0 0 auto;
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-2);
+  background: var(--stage);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardhead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.name {
+  min-width: 0;
+  font-size: var(--type-body-4-size);
+  line-height: var(--type-body-4-lh);
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+  font-size: var(--type-caption-size);
+  line-height: var(--type-caption-lh);
+  color: var(--semantic-label-gray-alternative);
+}
+.facts b {
+  color: var(--semantic-label-gray-secondary);
+  font-weight: 600;
+}
+
+.msg {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  font-size: var(--type-detail-1-size);
+  line-height: var(--type-detail-1-lh);
+}
+.msg.warn { color: var(--state-warn-text); }
+.msg.bad  { color: var(--state-bad-text); }
+.msg .dot {
+  flex: none;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: currentColor;
+  transform: translateY(-3px);
+}
+
+/* badge (node 26:1593) · size=S, type=square. 글자는 어느 색이든 흰색이다. */
+.badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 var(--space-2);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--color-common-white);
+  white-space: nowrap;
+}
+.badge-blue   { background: var(--color-blue-60); }
+.badge-sky    { background: var(--color-blue-80); }
+.badge-red    { background: var(--color-red-60); }
+.badge-yellow { background: var(--color-orange-60); }
+.badge-gray   { background: var(--color-cool-neutral-70); }
+.badge-black  { background: var(--color-cool-neutral-25); }
+
+.side {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: stretch;
+}
+
+/* ---------- 버튼 ---------- */
+/* BarisON 파일의 button 컴포넌트(node 21:502)를 그대로 옮긴 것.
+   size L/M/S · type primary/secondary/dark/danger · ghost · disabled
+   색은 전부 tokens.css 팔레트에 있는 값과 일치한다. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: inherit;
+  font-weight: 500;            /* Pretendard Medium */
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.btn-l { height: 48px; padding: 0 16px; border-radius: 8px; font-size: 18px; line-height: 24px; }
+.btn-m { height: 38px; padding: 0 12px; border-radius: 6px; font-size: 16px; line-height: 22px; }
+.btn-s { height: 32px; padding: 0  8px; border-radius: 4px; font-size: 14px; line-height: 20px; }
+
+.btn-primary   { background: var(--color-blue-60);          color: var(--color-common-white); }
+.btn-secondary { background: var(--color-blue-98);          color: var(--color-blue-60); }
+.btn-dark      { background: var(--color-cool-neutral-50);  color: var(--color-common-white); }
+.btn-danger    { background: var(--color-red-98);           color: var(--color-red-60); }
+
+/* 컴포넌트에는 hover 가 없고 active 만 있다. 웹에서는 둘 다 active 값을 쓴다. */
+.btn-primary:hover:not(:disabled),
+.btn-primary:active:not(:disabled)   { background: var(--color-blue-40); }
+.btn-secondary:hover:not(:disabled),
+.btn-secondary:active:not(:disabled) { background: var(--color-blue-95); }
+
+.btn-ghost                          { background: transparent; }
+.btn-ghost.btn-primary              { color: var(--color-blue-60); }
+.btn-ghost.btn-secondary            { color: var(--color-cool-neutral-50); }
+.btn-ghost.btn-danger               { color: var(--color-red-60); }
+.btn-ghost:hover:not(:disabled)     { background: var(--semantic-components-fill-primary); }
+
+.btn:disabled {
+  background: rgba(110, 117, 124, .09);   /* fill/state/opacity-disabled */
+  color: var(--color-cool-neutral-70);
+  cursor: default;
+}
+.btn-ghost:disabled { background: transparent; }
+
+.drop-hint {
+  padding: 44px 20px;
+  text-align: center;
+  font-size: var(--type-body-4-size);
+  color: var(--semantic-label-gray-alternative);
+}
+
+/* ---------- 바닥 고정 ---------- */
+
+.dock {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 5;
+  border-top: 1px solid var(--semantic-border-normal);
+  background: var(--semantic-background-elevated-normal);
+  box-shadow: var(--shadow-lg);
+}
+.dock .inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dock .status {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--type-body-4-size);
+  line-height: var(--type-body-4-lh);
+  color: var(--semantic-label-gray-alternative);
+}
+.dock .status b {
+  color: var(--semantic-label-gray-primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 그 외 ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--semantic-label-blue-normal);
+  outline-offset: 2px;
+}
+
+body.nosave #saveall,
+body.nosave .side .btn:first-of-type { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+@media (max-width: 560px) {
+  .card { flex-wrap: wrap; }
+  .side {
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--space-2);
+  }
+}

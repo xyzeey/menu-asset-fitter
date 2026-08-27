@@ -1,0 +1,392 @@
+/* ============================================================
+   XYZ Design System — Tokens
+   Color palette, semantic colors (Light + Dark), typography,
+   radius, shadow, spacing.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+/* Brand font — shipped with the system */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('assets/PretendardVariable.woff2') format('woff2');
+}
+
+:root {
+  /* ───────── Color palette — Neutral ───────── */
+  --color-common-white: #FFFFFF;
+  --color-common-black: #000000;
+
+  --color-neutral-10: #1A1A1A;
+  --color-neutral-15: #262626;
+  --color-neutral-20: #333333;
+  --color-neutral-25: #404040;
+  --color-neutral-30: #4D4D4D;
+  --color-neutral-40: #666666;
+  --color-neutral-50: #808080;
+  --color-neutral-60: #999999;
+  --color-neutral-70: #B3B3B3;
+  --color-neutral-80: #CCCCCC;
+  --color-neutral-90: #E6E6E6;
+  --color-neutral-95: #F2F2F2;
+  --color-neutral-98: #FAFAFA;
+
+  /* ───────── Cool neutral ───────── */
+  --color-cool-neutral-10: #14191F;
+  --color-cool-neutral-15: #21252C;
+  --color-cool-neutral-20: #2E3238;
+  --color-cool-neutral-25: #393F46;
+  --color-cool-neutral-30: #484C52;
+  --color-cool-neutral-40: #60656C;
+  --color-cool-neutral-50: #787E87;
+  --color-cool-neutral-60: #93989F;
+  --color-cool-neutral-70: #AEB2B8;
+  --color-cool-neutral-80: #C9CCCF;
+  --color-cool-neutral-90: #E3E6E9;
+  --color-cool-neutral-95: #F0F2F4;
+  --color-cool-neutral-98: #F9FAFB;
+
+  /* ───────── Blue (primary accent) ───────── */
+  --color-blue-15: #00214D;
+  --color-blue-20: #002C66;
+  --color-blue-30: #004299;
+  --color-blue-40: #0058CC;
+  --color-blue-45: #0063E5;
+  --color-blue-50: #006FFF;
+  --color-blue-60: #338BFF;
+  --color-blue-70: #57A0FF;
+  --color-blue-80: #75B1FF;
+  --color-blue-85: #99C5FF;
+  --color-blue-90: #C2DCFF;
+  --color-blue-95: #D6E8FF;
+  --color-blue-98: #EBF3FF;
+
+  /* ───────── Pink ───────── */
+  --color-pink-20: #61054A;
+  --color-pink-30: #91086F;
+  --color-pink-40: #C20A94;
+  --color-pink-50: #F42FC3;
+  --color-pink-60: #FB60D4;
+  --color-pink-70: #FC7EDC;
+  --color-pink-80: #FF99E5;
+  --color-pink-90: #FFC2F0;
+  --color-pink-95: #FFD6F5;
+  --color-pink-98: #FFEBFA;
+
+  /* ───────── Violet ───────── */
+  --color-violet-20: #1F0A5C;
+  --color-violet-30: #2E0F8A;
+  --color-violet-40: #401AB2;
+  --color-violet-50: #5326D9;
+  --color-violet-60: #6B3DF5;
+  --color-violet-70: #906EF7;
+  --color-violet-80: #B59EFA;
+  --color-violet-90: #DACFFC;
+  --color-violet-95: #EDE7FE;
+  --color-violet-98: #F8F5FE;
+
+  /* ───────── Aqua ───────── */
+  --color-aqua-20: #034363;
+  --color-aqua-30: #046595;
+  --color-aqua-40: #058DC7;
+  --color-aqua-50: #06B0F9;
+  --color-aqua-60: #38C0FA;
+  --color-aqua-70: #6AD2FB;
+  --color-aqua-80: #9CE1FC;
+  --color-aqua-90: #CDEEFE;
+  --color-aqua-95: #E6F6FE;
+  --color-aqua-98: #F5FCFF;
+
+  /* ───────── Emerald ───────── */
+  --color-emerald-20: #055F61;
+  --color-emerald-30: #078182;
+  --color-emerald-40: #09A2A5;
+  --color-emerald-50: #2BC4CA;
+  --color-emerald-60: #2DD0D2;
+  --color-emerald-70: #52DEE0;
+  --color-emerald-80: #8FEFED;
+  --color-emerald-90: #C5F7F6;
+  --color-emerald-95: #E0FBFA;
+  --color-emerald-98: #EDFCFC;
+
+  /* ───────── Green ───────── */
+  --color-green-20: #056127;
+  --color-green-30: #08913A;
+  --color-green-40: #1FAD53;
+  --color-green-50: #23C75F;
+  --color-green-60: #3CDD77;
+  --color-green-70: #79ECA3;
+  --color-green-80: #A6F2C2;
+  --color-green-90: #C9F7DA;
+  --color-green-95: #DBFAE7;
+  --color-green-98: #EDFCF3;
+
+  /* ───────── Light green ───────── */
+  --color-light-green-20: #415C0A;
+  --color-light-green-30: #608613;
+  --color-light-green-40: #8ABF22;
+  --color-light-green-50: #9DD926;
+  --color-light-green-60: #B1E052;
+  --color-light-green-70: #C6EC79;
+  --color-light-green-80: #D9F2A6;
+  --color-light-green-90: #E8F7C9;
+  --color-light-green-95: #F0FADB;
+  --color-light-green-98: #F7FCED;
+
+  /* ───────── Yellow ───────── */
+  --color-yellow-20: #735B0D;
+  --color-yellow-30: #A17F12;
+  --color-yellow-40: #F2BD0D;
+  --color-yellow-50: #FFD000;
+  --color-yellow-60: #FFE433;
+  --color-yellow-70: #FFF066;
+  --color-yellow-80: #FFF599;
+  --color-yellow-90: #FFF9C2;
+  --color-yellow-95: #FFFBD6;
+  --color-yellow-98: #FFFDEB;
+
+  /* ───────── Orange ───────── */
+  --color-orange-20: #653D0B;
+  --color-orange-30: #975B11;
+  --color-orange-40: #D47D11;
+  --color-orange-50: #FF8C00;
+  --color-orange-60: #FFA333;
+  --color-orange-70: #FFBA66;
+  --color-orange-80: #FFD199;
+  --color-orange-90: #FFE3C2;
+  --color-orange-95: #FFEDD6;
+  --color-orange-98: #FFF6EB;
+
+  /* ───────── Red orange ───────── */
+  --color-red-orange-20: #5C2C0A;
+  --color-red-orange-30: #8A3C0F;
+  --color-red-orange-40: #BD4F0F;
+  --color-red-orange-50: #FF5E00;
+  --color-red-orange-60: #FF7733;
+  --color-red-orange-70: #FF9966;
+  --color-red-orange-80: #FFBB99;
+  --color-red-orange-90: #FFD7C2;
+  --color-red-orange-95: #FFE4D6;
+  --color-red-orange-98: #FFF2EB;
+
+  /* ───────── Red ───────── */
+  --color-red-20: #660000;
+  --color-red-30: #990000;
+  --color-red-40: #CC0000;
+  --color-red-50: #FF0000;
+  --color-red-60: #FF3D3D;
+  --color-red-70: #FF6666;
+  --color-red-80: #FF9999;
+  --color-red-90: #FFC2C2;
+  --color-red-95: #FFD6D6;
+  --color-red-98: #FFEBEB;
+
+  /* ───────── Brown ───────── */
+  --color-brown-15: #30231C;
+  --color-brown-20: #423024;
+  --color-brown-30: #634836;
+  --color-brown-40: #856047;
+  --color-brown-50: #9B6B4B;
+  --color-brown-60: #B2754D;
+  --color-brown-70: #D18E61;
+  --color-brown-80: #DDAA88;
+  --color-brown-90: #EBC6AD;
+  --color-brown-95: #F5E2D6;
+  --color-brown-98: #FAF1EA;
+
+  /* ═════════════════════════════════════════════════════════════
+     Semantic tokens — Light mode (default)
+     ═════════════════════════════════════════════════════════════ */
+  --semantic-static-white: var(--color-common-white);
+  --semantic-static-black: var(--color-common-black);
+  --semantic-static-caution: var(--color-orange-60);
+  --semantic-static-error: var(--color-red-60);
+
+  --semantic-cta-primary: var(--color-neutral-10);
+  --semantic-cta-secondary: var(--color-cool-neutral-40);
+  --semantic-cta-tertiary: var(--color-cool-neutral-30);
+
+  --semantic-label-gray-primary: var(--color-cool-neutral-15);
+  --semantic-label-gray-secondary: var(--color-cool-neutral-25);
+  --semantic-label-gray-alternative: var(--color-cool-neutral-50);
+  --semantic-label-gray-assistive: var(--color-cool-neutral-70);
+  --semantic-label-gray-disabled: var(--color-cool-neutral-80);
+
+  --semantic-label-blue-normal: var(--color-blue-50);
+  --semantic-label-blue-alternative: var(--color-blue-40);
+
+  --semantic-background-normal-normal: var(--color-common-white);
+  --semantic-background-normal-alternative: var(--color-cool-neutral-98);
+  --semantic-background-elevated-normal: var(--color-common-white);
+  --semantic-background-elevated-alternative: var(--color-cool-neutral-95);
+
+  --semantic-accent-pink: var(--color-pink-50);
+  --semantic-accent-violet: var(--color-violet-60);
+  --semantic-accent-aqua: var(--color-aqua-50);
+  --semantic-accent-emerald: var(--color-emerald-40);
+  --semantic-accent-green: var(--color-green-50);
+  --semantic-accent-light-green: var(--color-light-green-50);
+  --semantic-accent-yellow: var(--color-yellow-60);
+  --semantic-accent-red-orange: var(--color-red-orange-60);
+  --semantic-accent-brown: var(--color-brown-50);
+
+  --semantic-components-fill-primary: var(--color-cool-neutral-98);
+  --semantic-components-fill-secondary: var(--color-cool-neutral-95);
+  --semantic-components-fill-tertiary: var(--color-cool-neutral-90);
+  --semantic-components-fill-normal: var(--color-cool-neutral-70);
+  --semantic-components-fill-alternative: var(--color-cool-neutral-50);
+  --semantic-components-fill-assistive-1: var(--color-cool-neutral-30);
+
+  --semantic-border-normal: var(--color-cool-neutral-90);
+  --semantic-border-alternative: var(--color-cool-neutral-95);
+
+  --semantic-dimmer-normal: rgba(0, 0, 0, 0.56);
+
+  /* ───────── Radius ───────── */
+  --radius-2: 2px;   /* baseline — subtle softening */
+  --radius-4: 4px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-24: 24px;
+  --radius-40: 40px; /* card / panel */
+  --radius-full: 9999px;
+
+  /* ───────── Shadow ───────── */
+  /* Used in Light mode only for layered components. */
+  --shadow-sm: 0px 1px 4px 0px rgba(120, 126, 135, 0.08);
+  --shadow-md: 0px 1px 8px 0px rgba(120, 126, 135, 0.10);
+  --shadow-lg: 0px 8px 24px 0px rgba(120, 126, 135, 0.12);
+  --shadow-xl: 0px 24px 48px 0px rgba(120, 126, 135, 0.16);
+
+  /* ───────── Spacing (4-base) ───────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ───────── Font families ───────── */
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+    'Helvetica Neue', Arial, sans-serif;
+  --font-display-italic: 'Playfair Display', Georgia, 'Times New Roman', serif;
+
+  /* ───────── Typography — PC (base) ─────────
+     From /02.-Typography/PC-Typography (Korean + Latin; line-height 140–160%) */
+  --type-headline-1-size: 56px; --type-headline-1-lh: 1.3;  --type-headline-1-weight: 700;
+  --type-headline-2-size: 40px; --type-headline-2-lh: 1.3;  --type-headline-2-weight: 700;
+  --type-title-1-size:    28px; --type-title-1-lh:    1.4;  --type-title-1-weight:    700;
+  --type-title-2-size:    26px; --type-title-2-lh:    1.4;  --type-title-2-weight:    700;
+  --type-title-3-size:    24px; --type-title-3-lh:    1.4;  --type-title-3-weight:    600;
+  --type-body-1-size:     22px; --type-body-1-lh:     1.5;  --type-body-1-weight:     500;
+  --type-body-2-size:     20px; --type-body-2-lh:     1.5;  --type-body-2-weight:     500;
+  --type-body-3-size:     18px; --type-body-3-lh:     1.5;  --type-body-3-weight:     500;
+  --type-body-4-size:     16px; --type-body-4-lh:     1.5;  --type-body-4-weight:     500;
+  --type-detail-1-size:   14px; --type-detail-1-lh:   1.5;  --type-detail-1-weight:   500;
+  --type-caption-size:    12px; --type-caption-lh:    1.5;  --type-caption-weight:    500;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   Dark mode — Semantic remap
+   Opt in with `.dark` on <html> or <body>, or via prefers-color-scheme
+   ═════════════════════════════════════════════════════════════ */
+.dark, [data-theme="dark"] {
+  --semantic-cta-primary: var(--color-common-white);
+  --semantic-cta-secondary: var(--color-cool-neutral-70);
+  --semantic-cta-tertiary: var(--color-cool-neutral-80);
+
+  --semantic-label-gray-primary: var(--color-cool-neutral-95);
+  --semantic-label-gray-secondary: var(--color-cool-neutral-80);
+  --semantic-label-gray-alternative: var(--color-cool-neutral-60);
+  --semantic-label-gray-assistive: var(--color-cool-neutral-40);
+  --semantic-label-gray-disabled: var(--color-cool-neutral-30);
+
+  --semantic-label-blue-normal: var(--color-blue-60);
+  --semantic-label-blue-alternative: var(--color-blue-70);
+
+  --semantic-background-normal-normal: var(--color-cool-neutral-10);
+  --semantic-background-normal-alternative: var(--color-cool-neutral-15);
+  --semantic-background-elevated-normal: var(--color-cool-neutral-15);
+  --semantic-background-elevated-alternative: var(--color-cool-neutral-20);
+
+  --semantic-components-fill-primary: var(--color-cool-neutral-15);
+  --semantic-components-fill-secondary: var(--color-cool-neutral-20);
+  --semantic-components-fill-tertiary: var(--color-cool-neutral-25);
+  --semantic-components-fill-normal: var(--color-cool-neutral-40);
+  --semantic-components-fill-alternative: var(--color-cool-neutral-50);
+  --semantic-components-fill-assistive-1: var(--color-cool-neutral-70);
+
+  --semantic-border-normal: var(--color-cool-neutral-25);
+  --semantic-border-alternative: var(--color-cool-neutral-20);
+
+  --semantic-dimmer-normal: rgba(0, 0, 0, 0.72);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   Typography classes
+   Pattern:
+     .type-<role>-<size>  (role: headline/title/body/detail/caption)
+   Use the --type-* vars if you prefer composing inline.
+   ═════════════════════════════════════════════════════════════ */
+
+html { font-family: var(--font-sans); }
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--type-body-4-size);
+  line-height: var(--type-body-4-lh);
+  color: var(--semantic-label-gray-primary);
+  background: var(--semantic-background-normal-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.type-headline-1 { font-size: var(--type-headline-1-size); line-height: var(--type-headline-1-lh); font-weight: var(--type-headline-1-weight); letter-spacing: -0.02em; }
+.type-headline-2 { font-size: var(--type-headline-2-size); line-height: var(--type-headline-2-lh); font-weight: var(--type-headline-2-weight); letter-spacing: -0.02em; }
+.type-title-1    { font-size: var(--type-title-1-size);    line-height: var(--type-title-1-lh);    font-weight: var(--type-title-1-weight);    letter-spacing: -0.01em; }
+.type-title-2    { font-size: var(--type-title-2-size);    line-height: var(--type-title-2-lh);    font-weight: var(--type-title-2-weight);    letter-spacing: -0.01em; }
+.type-title-3    { font-size: var(--type-title-3-size);    line-height: var(--type-title-3-lh);    font-weight: var(--type-title-3-weight);    letter-spacing: -0.01em; }
+.type-body-1     { font-size: var(--type-body-1-size);     line-height: var(--type-body-1-lh);     font-weight: var(--type-body-1-weight); }
+.type-body-2     { font-size: var(--type-body-2-size);     line-height: var(--type-body-2-lh);     font-weight: var(--type-body-2-weight); }
+.type-body-3     { font-size: var(--type-body-3-size);     line-height: var(--type-body-3-lh);     font-weight: var(--type-body-3-weight); }
+.type-body-4     { font-size: var(--type-body-4-size);     line-height: var(--type-body-4-lh);     font-weight: var(--type-body-4-weight); }
+.type-detail-1   { font-size: var(--type-detail-1-size);   line-height: var(--type-detail-1-lh);   font-weight: var(--type-detail-1-weight); }
+.type-caption    { font-size: var(--type-caption-size);    line-height: var(--type-caption-lh);    font-weight: var(--type-caption-weight); }
+
+/* Brand-voice display:
+   Sans "Baris" + italic serif word — matches the Barisbrew / Barisdrip lockup.
+   Usage: <span class="brand-lockup"><b>Baris</b><i>brew</i></span> */
+.brand-lockup {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  display: inline-flex;
+  align-items: baseline;
+}
+.brand-lockup i,
+.brand-lockup em {
+  font-family: var(--font-display-italic);
+  font-style: italic;
+  font-weight: 700;
+  margin-left: 0.02em;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   Utility: surface & border helpers
+   ═════════════════════════════════════════════════════════════ */
+.surface        { background: var(--semantic-background-normal-normal);       color: var(--semantic-label-gray-primary); }
+.surface-alt    { background: var(--semantic-background-normal-alternative); color: var(--semantic-label-gray-primary); }
+.surface-elev   { background: var(--semantic-background-elevated-normal);    color: var(--semantic-label-gray-primary); box-shadow: var(--shadow-md); }
+.border-normal  { border: 1px solid var(--semantic-border-normal); }
+.border-alt     { border: 1px solid var(--semantic-border-alternative); }

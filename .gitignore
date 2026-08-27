@@ -1,0 +1,8 @@
+# Figma 플러그인과 그 설치 안내는 공유 드라이브로 배포한다. 이 레포에는 웹 도구만 올린다.
+loungex-menu-asset/
+install.html
+
+# 빌드 산출물 (claude.ai 아티팩트용)
+dist/
+
+.DS_Store

@@ -1,0 +1,447 @@
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>라운지엑스<br>상품 이미지 생성기</h1>
+
+    <figure class="specfig">
+      <svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="캔버스 120 곱하기 120, 콘텐츠 영역 96 곱하기 86">
+        <rect x="6" y="6" width="120" height="120" rx="4" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="1"/>
+        <rect x="18" y="28" width="96" height="86" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.55)" stroke-width="1" stroke-dasharray="3 3"/>
+        <path d="M64 44 h4 v-6 h8 l-10 -10 -10 10 h8 z" fill="rgba(255,255,255,.5)"/>
+        <path d="M64 98 h4 v6 h8 l-10 10 -10 -10 h8 z" fill="rgba(255,255,255,.5)"/>
+        <text x="66" y="76" fill="rgba(255,255,255,.9)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12" font-weight="600" text-anchor="middle">96×86</text>
+      </svg>
+      <figcaption>
+        캔버스 <b>120 × 120</b><br>
+        영역 <b>96 × 86</b><br>
+        여백 좌우 12 · 위 22 · 아래 12<br>
+        정렬 <b>가운데</b>
+      </figcaption>
+    </figure>
+  </header>
+
+  <div id="drop" tabindex="0" role="button" aria-label="이미지 고르기">
+    <strong>이미지를 끌어다 놓으세요</strong>
+    <span>400×400px 이상, 배경이 투명한 PNG 파일을 업로드해주세요</span>
+  </div>
+
+  <div class="panel bar">
+    <div class="field">
+      <label>내보낼 크기</label>
+      <span class="out">480 × 480 PNG</span>
+    </div>
+    <span class="spacer"></span>
+    <label class="cbx">
+      <input type="checkbox" id="guide" checked>
+      <span class="cbx-box" aria-hidden="true"></span>
+      <span class="cbx-label">영역 표시</span>
+    </label>
+  </div>
+
+  <div class="tally" id="tally" hidden>
+    <div class="tile all"><div class="n" id="t-all">0</div><div class="k">전체</div></div>
+    <div class="tile ok"><div class="n" id="t-ok">0</div><div class="k">통과</div></div>
+    <div class="tile warn"><div class="n" id="t-warn">0</div><div class="k">경고</div></div>
+    <div class="tile bad"><div class="n" id="t-bad">0</div><div class="k">오류</div></div>
+  </div>
+
+  <div id="list">
+    <div class="drop-hint">아직 넣은 이미지가 없습니다</div>
+  </div>
+</div>
+
+<div class="dock">
+  <div class="inner">
+    <span class="status" id="status">이미지를 넣으면 여기에 결과가 표시됩니다</span>
+    <button type="button" class="btn btn-m btn-ghost btn-secondary" id="clear" disabled>비우기</button>
+    <button type="button" class="btn btn-m btn-primary" id="saveall" disabled>한번에 다운로드</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* 피그마 플러그인과 반드시 같은 값 */
+const CANVAS = 120;
+const AREA = { x: 12, y: 22, w: 96, h: 86 };
+const ALPHA_T = 8;      // 이보다 불투명하면 내용으로 본다
+
+const $ = (s) => document.querySelector(s);
+const listEl = $("#list");
+const dropEl = $("#drop");
+
+let shots = [];
+const scale = 4;    // 480 = 120 x 4
+let showGuide = true;
+let seq = 0;
+let saver = null;      // claude.use("downloads") 결과, 없으면 링크로 저장
+
+const picker = document.createElement("input");
+picker.type = "file";
+picker.multiple = true;
+picker.accept = "image/*";
+
+/* ---------- 저장 ---------- */
+
+let savingChecked = false;
+
+(async () => {
+  const hosted = !!(window.claude && typeof window.claude.use === "function");
+  if (hosted) {
+    try { saver = await window.claude.use("downloads"); } catch (e) { saver = null; }
+    if (!saver) {
+      // 이 화면에서는 파일을 건네줄 수 없다 — 버튼을 숨긴다
+      document.body.classList.add("nosave");
+      setStatus("이 화면에서는 파일 저장이 안 됩니다. 규격 확인용으로만 쓰실 수 있습니다");
+    }
+  }
+  savingChecked = true;
+})();
+
+async function saveFile(filename, blob) {
+  if (saver) {
+    await saver.save({ filename, data: blob });
+    return;
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/* ---------- 넣기 ---------- */
+
+dropEl.addEventListener("click", () => picker.click());
+dropEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); picker.click(); }
+});
+picker.addEventListener("change", () => { intake([...picker.files]); picker.value = ""; });
+
+["dragenter", "dragover"].forEach((t) =>
+  dropEl.addEventListener(t, (e) => { e.preventDefault(); dropEl.classList.add("on"); }));
+["dragleave", "drop"].forEach((t) =>
+  dropEl.addEventListener(t, (e) => { e.preventDefault(); dropEl.classList.remove("on"); }));
+dropEl.addEventListener("drop", (e) => intake([...e.dataTransfer.files]));
+document.addEventListener("dragover", (e) => e.preventDefault());
+document.addEventListener("drop", (e) => e.preventDefault());
+
+async function intake(files) {
+  const imgs = files.filter((f) => /^image\//.test(f.type));
+  if (!imgs.length) return;
+  setStatus(`읽는 중… 0 / ${imgs.length}`);
+  let done = 0;
+  for (const f of imgs) {
+    try { shots.push(await measure(f)); }
+    catch (e) {
+      shots.push({ id: ++seq, file: f.name, unreadable: true });
+    }
+    done++;
+    setStatus(`읽는 중… ${done} / ${imgs.length}`);
+    draw();
+  }
+  draw();
+}
+
+/* ---------- 계산 ---------- */
+
+async function measure(file) {
+  const buf = await file.arrayBuffer();
+  const bmp = await createImageBitmap(new Blob([buf], { type: file.type }));
+  const W = bmp.width, H = bmp.height;
+
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const ctx = c.getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(bmp, 0, 0);
+  const d = ctx.getImageData(0, 0, W, H).data;
+
+  let minX = W, minY = H, maxX = -1, maxY = -1;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      if (d[(y * W + x) * 4 + 3] > ALPHA_T) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  const shot = { id: ++seq, file: file.name, bmp, imgW: W, imgH: H };
+
+  if (maxX < 0) {
+    shot.empty = true;
+    return shot;
+  }
+
+  shot.bbox = { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
+  shot.s = Math.min(AREA.w / shot.bbox.w, AREA.h / shot.bbox.h);
+
+  const opaque = (x, y) => d[(y * W + x) * 4 + 3] > 250;
+  shot.opaque = opaque(0, 0) && opaque(W - 1, 0) && opaque(0, H - 1) && opaque(W - 1, H - 1);
+
+  return shot;
+}
+
+/* 판정은 고른 배수에 따라 달라지므로 그릴 때마다 다시 한다 */
+function assess(shot) {
+  if (shot.unreadable) return { level: "bad", notes: ["열 수 없는 파일입니다"] };
+  if (shot.empty) return { level: "bad", notes: ["전부 투명한 이미지입니다"] };
+
+  const notes = [];
+  let level = "ok";
+
+  if (shot.opaque) {
+    level = "bad";
+    notes.push("배경이 투명하지 않습니다. 이대로는 여백을 못 잘라냅니다");
+  }
+
+  if (shot.s > 1 / scale) {
+    const needW = Math.ceil(shot.bbox.w * shot.s * scale);
+    const needH = Math.ceil(shot.bbox.h * shot.s * scale);
+    if (level === "ok") level = "warn";
+    notes.push(
+      `${scale}배로 내보내기엔 해상도가 모자랍니다. ` +
+      `내용이 ${shot.bbox.w}×${shot.bbox.h}px인데 ${needW}×${needH}px 이상 필요합니다`
+    );
+  }
+
+  return { level, notes };
+}
+
+/* 내용의 중심이 영역의 중심에 오도록 이미지 전체를 옮긴다 */
+function layout(shot) {
+  const s = shot.s;
+  return {
+    s,
+    x: AREA.x + AREA.w / 2 - s * (shot.bbox.x + shot.bbox.w / 2),
+    y: AREA.y + AREA.h / 2 - s * (shot.bbox.y + shot.bbox.h / 2),
+    w: shot.imgW * s,
+    h: shot.imgH * s
+  };
+}
+
+function paint(cv, shot, px, guide) {
+  const g = cv.getContext("2d");
+  const k = px / CANVAS;
+  g.clearRect(0, 0, px, px);
+
+  if (shot.bbox && shot.bmp) {
+    const L = layout(shot);
+    g.save();
+    g.beginPath();
+    g.rect(0, 0, px, px);
+    g.clip();
+    g.drawImage(shot.bmp, L.x * k, L.y * k, L.w * k, L.h * k);
+    g.restore();
+  }
+
+  if (guide) {
+    g.strokeStyle = getComputedStyle(document.documentElement)
+      .getPropertyValue("--stage-line").trim() || "rgba(255,255,255,.3)";
+    g.setLineDash([3 * k, 3 * k]);
+    g.lineWidth = Math.max(1, k);
+    g.strokeRect(AREA.x * k, AREA.y * k, AREA.w * k, AREA.h * k);
+  }
+}
+
+function render(shot) {
+  const px = CANVAS * scale;
+  const cv = document.createElement("canvas");
+  cv.width = px; cv.height = px;
+  paint(cv, shot, px, false);
+  return new Promise((res) => cv.toBlob(res, "image/png"));
+}
+
+function outName(shot) {
+  const base = shot.file.replace(/\.[^.]+$/, "");
+  return scale === 1 ? `${base}.png` : `${base}@${scale}x.png`;
+}
+
+/* ---------- 화면 ---------- */
+
+function draw() {
+  listEl.innerHTML = "";
+  if (!shots.length) {
+    listEl.innerHTML = '<div class="drop-hint">아직 넣은 이미지가 없습니다</div>';
+    $("#tally").hidden = true;
+    tally();
+    return;
+  }
+  $("#tally").hidden = false;
+  shots.forEach((shot) => listEl.appendChild(card(shot)));
+  tally();
+}
+
+const LEVEL_TEXT = { ok: "통과", warn: "경고", bad: "오류" };
+// badge 에 초록이 없어서 통과는 blue 로 간다
+const BADGE_COLOR = { ok: "badge-blue", warn: "badge-yellow", bad: "badge-red" };
+
+function card(shot) {
+  const { level, notes } = assess(shot);
+
+  const el = document.createElement("div");
+  el.className = "card " + level;
+
+  const cv = document.createElement("canvas");
+  cv.className = "stage";
+  cv.width = CANVAS * 2;
+  cv.height = CANVAS * 2;
+  paint(cv, shot, CANVAS * 2, showGuide);
+  el.appendChild(cv);
+
+  const body = document.createElement("div");
+  body.className = "body";
+  el.appendChild(body);
+
+  const head = document.createElement("div");
+  head.className = "cardhead";
+  body.appendChild(head);
+
+  const name = document.createElement("div");
+  name.className = "name";
+  name.textContent = shot.file;
+  head.appendChild(name);
+
+  const chip = document.createElement("span");
+  chip.className = "badge " + BADGE_COLOR[level];
+  chip.textContent = LEVEL_TEXT[level];
+  head.appendChild(chip);
+
+  if (shot.bbox) {
+    const L = layout(shot);
+    const facts = document.createElement("div");
+    facts.className = "facts";
+    [
+      ["원본", `${shot.imgW}×${shot.imgH}`],
+      ["내용", `${shot.bbox.w}×${shot.bbox.h}`],
+      ["영역 안", `${Math.round(shot.bbox.w * L.s)}×${Math.round(shot.bbox.h * L.s)}`],
+      ["배율", L.s.toFixed(3)]
+    ].forEach(([k, v]) => {
+      const item = document.createElement("span");
+      item.append(k + " ");
+      const b = document.createElement("b");
+      b.textContent = v;
+      item.appendChild(b);
+      facts.appendChild(item);
+    });
+    body.appendChild(facts);
+  }
+
+  notes.forEach((text) => {
+    const m = document.createElement("div");
+    m.className = "msg " + (level === "bad" ? "bad" : "warn");
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    m.appendChild(dot);
+    m.appendChild(document.createTextNode(text));
+    body.appendChild(m);
+  });
+
+  const side = document.createElement("div");
+  side.className = "side";
+
+  const one = document.createElement("button");
+  one.type = "button";
+  one.className = "btn btn-s btn-secondary";
+  one.textContent = "다운로드";
+  one.disabled = level === "bad";
+  one.addEventListener("click", async () => {
+    one.disabled = true;
+    one.textContent = "저장 중…";
+    try {
+      await saveFile(outName(shot), await render(shot));
+      one.textContent = "받았습니다";
+    } catch (e) {
+      one.textContent = "다시";
+      setStatus(saveError(e));
+    } finally {
+      setTimeout(() => { one.textContent = "다운로드"; one.disabled = false; }, 1600);
+    }
+  });
+  side.appendChild(one);
+
+  const drop = document.createElement("button");
+  drop.type = "button";
+  drop.className = "btn btn-s btn-ghost btn-secondary";
+  drop.textContent = "삭제";
+  drop.addEventListener("click", () => {
+    shots = shots.filter((s) => s !== shot);
+    draw();
+  });
+  side.appendChild(drop);
+
+  el.appendChild(side);
+  return el;
+}
+
+function tally() {
+  const n = { ok: 0, warn: 0, bad: 0 };
+  shots.forEach((s) => n[assess(s).level]++);
+  $("#t-all").textContent = shots.length;
+  $("#t-ok").textContent = n.ok;
+  $("#t-warn").textContent = n.warn;
+  $("#t-bad").textContent = n.bad;
+
+  const ready = n.ok + n.warn;
+  $("#saveall").disabled = ready === 0;
+  $("#saveall").textContent = ready > 1 ? `${ready}개 한번에 다운로드` : "다운로드";
+  $("#clear").disabled = shots.length === 0;
+
+  if (!shots.length) setStatus("이미지를 넣으면 여기에 결과가 표시됩니다");
+  else if (n.bad) setStatus(`<b>${ready}</b>개 준비됨 · <b>${n.bad}</b>개는 고쳐야 합니다`);
+  else setStatus(`<b>${ready}</b>개 준비됨`);
+}
+
+function setStatus(html) { $("#status").innerHTML = html; }
+
+function saveError(e) {
+  const code = e && e.code;
+  if (code === "declined") return "저장을 취소했습니다";
+  if (code === "rate_limited") return "저장 창이 이미 열려 있습니다. 잠시 후 다시 눌러주세요";
+  if (code === "too_large") return "파일이 너무 큽니다";
+  return "저장하지 못했습니다";
+}
+
+/* ---------- 조작 ---------- */
+
+$("#guide").addEventListener("change", (e) => {
+  showGuide = e.target.checked;
+  draw();
+});
+
+$("#clear").addEventListener("click", () => { shots = []; draw(); });
+
+$("#saveall").addEventListener("click", async () => {
+  const btn = $("#saveall");
+  const queue = shots.filter((s) => assess(s).level !== "bad");
+  btn.disabled = true;
+  let saved = 0;
+
+  for (const shot of queue) {
+    setStatus(`저장 중… <b>${saved + 1}</b> / ${queue.length}`);
+    try {
+      await saveFile(outName(shot), await render(shot));
+      saved++;
+    } catch (e) {
+      if (e && e.code === "rate_limited") {
+        await new Promise((r) => setTimeout(r, 1500));
+        try { await saveFile(outName(shot), await render(shot)); saved++; continue; }
+        catch (e2) { setStatus(`<b>${saved}</b>개 저장 후 멈춤 — ${saveError(e2)}`); break; }
+      }
+      setStatus(`<b>${saved}</b>개 저장 후 멈춤 — ${saveError(e)}`);
+      break;
+    }
+  }
+
+  if (saved === queue.length) setStatus(`<b>${saved}</b>개 저장했습니다`);
+  btn.disabled = false;
+  setTimeout(tally, 2600);
+});
+
+draw();
+</script>
