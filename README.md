@@ -4,6 +4,8 @@
 
 **→ https://xyzeey.github.io/menu-asset-fitter/**
 
+Figma 플러그인 설치 안내 → https://xyzeey.github.io/menu-asset-fitter/install.html
+
 | 규격 | 값 |
 |---|---|
 | 캔버스 | 120 × 120 |
@@ -55,7 +57,8 @@ XDS(`tokens.css`)를 따른다. 라이트 전용. 버튼 · 배지 · 체크박�
 ## 같이 쓰는 것
 
 Figma 플러그인이 따로 있다. 이미지를 넣으면 같은 규격으로 배치해 컴포넌트로 등록해준다.
-그쪽은 이 레포에 없다.
+플러그인 소스는 이 레포에 없고 공유 드라이브로 배포한다.
+설치 방법은 [install.html](https://xyzeey.github.io/menu-asset-fitter/install.html) 참고.
 
 - 피그마에 넣을 거면 → 플러그인에 **원본**을 준다. 원본을 그대로 품고 보이는 범위만 조정하므로
   나중에 규격이 바뀌어도 화질 손실 없이 다시 만들 수 있다
