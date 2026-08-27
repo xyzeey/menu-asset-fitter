@@ -4,17 +4,17 @@
     <h1>라운지엑스<br>상품 이미지 생성기</h1>
 
     <figure class="specfig">
-      <svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="캔버스 120 곱하기 120, 콘텐츠 영역 96 곱하기 86">
+      <svg width="132" height="132" viewBox="0 0 132 132" role="img" aria-label="캔버스 120 곱하기 120, 콘텐츠 영역 96 곱하기 78">
         <rect x="6" y="6" width="120" height="120" rx="4" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="1"/>
-        <rect x="18" y="28" width="96" height="86" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.55)" stroke-width="1" stroke-dasharray="3 3"/>
+        <rect x="18" y="28" width="96" height="78" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.55)" stroke-width="1" stroke-dasharray="3 3"/>
         <path d="M64 44 h4 v-6 h8 l-10 -10 -10 10 h8 z" fill="rgba(255,255,255,.5)"/>
-        <path d="M64 98 h4 v6 h8 l-10 10 -10 -10 h8 z" fill="rgba(255,255,255,.5)"/>
-        <text x="66" y="76" fill="rgba(255,255,255,.9)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12" font-weight="600" text-anchor="middle">96×86</text>
+        <path d="M64 90 h4 v6 h8 l-10 10 -10 -10 h8 z" fill="rgba(255,255,255,.5)"/>
+        <text x="66" y="72" fill="rgba(255,255,255,.9)" font-family="Pretendard Variable, Pretendard, sans-serif" font-size="12" font-weight="600" text-anchor="middle">96×78</text>
       </svg>
       <figcaption>
         캔버스 <b>120 × 120</b><br>
-        영역 <b>96 × 86</b><br>
-        여백 좌우 12 · 위 22 · 아래 12<br>
+        영역 <b>96 × 78</b><br>
+        여백 좌우 12 · 위 22 · 아래 20<br>
         정렬 <b>가운데</b>
       </figcaption>
     </figure>
@@ -63,7 +63,7 @@
 
 /* 피그마 플러그인과 반드시 같은 값 */
 const CANVAS = 120;
-const AREA = { x: 12, y: 22, w: 96, h: 86 };
+const AREA = { x: 12, y: 22, w: 96, h: 78 };
 const ALPHA_T = 8;      // 이보다 불투명하면 내용으로 본다
 
 const $ = (s) => document.querySelector(s);
