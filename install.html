@@ -117,7 +117,7 @@
 
   <header>
     <h1>메뉴 에셋 플러그인 설치</h1>
-    <p>한 번만 설치해두시면 됩니다. 이후 갱신은 신경 쓰지 않으셔도 됩니다.</p>
+    <p>한 번만 설치해두시면 됩니다. 새 버전이 나와도 파일만 덮어쓰면 됩니다.</p>
   </header>
 
   <section>
@@ -127,7 +127,7 @@
       쓰실 수 없습니다. 앱이 없으시면 <a href="https://www.figma.com/downloads/">figma.com/downloads</a>
       에서 받아주세요.
     </div>
-    <p>공유 드라이브의 <b>loungex-product-asset</b> 폴더가 내 컴퓨터로 동기화됐는지 확인해주세요.</p>
+    <p>슬랙에서 받은 <b>loungex-product-asset.zip</b> 을 준비해주세요.</p>
   </section>
 
   <section>
@@ -141,7 +141,16 @@
       </li>
       <li>
         <div class="txt">
-          <div><kbd>⌘</kbd> <kbd>/</kbd> 를 눌러 검색창을 띄워주세요.</div>
+          <div>zip 을 풀어주세요.</div>
+          <div class="sub">
+            <b>계속 둘 자리에 풀어주세요.</b> 다운로드 폴더처럼 나중에 정리하는 곳 말고,
+            문서 폴더 안 같은 곳이 좋습니다. 나중에 폴더를 옮기면 다시 설치해야 합니다.
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="txt">
+          <div>Figma 에서 <kbd>⌘</kbd> <kbd>/</kbd> 를 눌러 검색창을 띄워주세요.</div>
           <div class="sub">윈도우를 쓰시면 <kbd>Ctrl</kbd> <kbd>/</kbd> 입니다.</div>
         </div>
       </li>
@@ -156,8 +165,8 @@
       </li>
       <li>
         <div class="txt">
-          <div>파일 고르는 창에서 동기화된 <b>loungex-product-asset</b> 폴더로 들어가 <b>manifest.json</b> 을 골라주세요.</div>
-          <div class="sub">폴더를 다른 데로 복사하지 마시고, 동기화 폴더에서 바로 골라주세요. 그래야 갱신이 자동으로 됩니다.</div>
+          <div>파일 고르는 창에서 압축을 푼 <b>loungex-product-asset</b> 폴더로 들어가 <b>manifest.json</b> 을 골라주세요.</div>
+          <div class="sub">이 폴더 위치를 Figma 가 기억합니다. 이후로는 옮기지 말아주세요.</div>
         </div>
       </li>
       <li>
@@ -183,6 +192,15 @@
   </section>
 
   <section>
+    <h2>새 버전이 오면</h2>
+    <p>슬랙으로 새 zip 을 받으시면, 풀어서 <b>기존 폴더에 덮어써주세요.</b></p>
+    <div class="note">
+      폴더 위치만 그대로면 <b>다시 설치하지 않아도 됩니다.</b> Figma 는 실행할 때마다 그 폴더의
+      파일을 새로 읽습니다. 덮어쓴 뒤 플러그인 창을 닫았다 다시 실행해주세요.
+    </div>
+  </section>
+
+  <section>
     <h2>이미지 준비하기</h2>
     <table>
       <tr><th>파일 형식</th><td>배경이 투명한 PNG</td></tr>
@@ -203,10 +221,10 @@
       <dd>데스크톱 앱에서 여셨는지 확인해주세요. 앱이 맞다면 Plugins → Development 아래를 봐주세요.</dd>
 
       <dt>어제까지 되다가 안 됩니다</dt>
-      <dd>폴더 위치가 바뀌었을 수 있습니다. 위 설치 과정을 처음부터 다시 해주세요.</dd>
+      <dd>폴더를 옮기거나 지우셨을 수 있습니다. 위 설치 과정을 처음부터 다시 해주세요.</dd>
 
       <dt>고쳤다는데 그대로입니다</dt>
-      <dd>플러그인 창을 닫았다가 다시 실행해주세요. 그래도 그대로면 공유 드라이브 동기화가 끝났는지 확인해주세요.</dd>
+      <dd>플러그인 창을 닫았다가 다시 실행해주세요. 그래도 그대로면 새 zip 을 기존 폴더에 제대로 덮어썼는지 확인해주세요.</dd>
 
       <dt>넣을 컴포넌트가 목록에 안 뜹니다</dt>
       <dd>위쪽 <b>페이지</b> 드롭다운을 확인해주세요. 지금 열려 있는 페이지로 맞춰져 있으니, 다른 페이지에 있으면 그 페이지를 고르시거나 <b>모든 페이지</b>로 바꿔주세요.</dd>
