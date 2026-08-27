@@ -78,6 +78,22 @@
   .path b { font-weight: 600; color: var(--semantic-label-gray-primary); }
   .path span { color: var(--semantic-label-gray-assistive); }
 
+  .get {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+    padding: 18px; border-radius: var(--radius-2);
+    background: var(--semantic-background-elevated-normal);
+    border: 1px solid var(--semantic-border-normal);
+  }
+  .get .why { flex: 1 1 220px; min-width: 0; font-size: var(--type-detail-1-size);
+              line-height: var(--type-detail-1-lh); color: var(--semantic-label-gray-alternative); }
+  a.btn {
+    flex: none; display: inline-flex; align-items: center; justify-content: center;
+    height: 48px; padding: 0 16px; border-radius: 8px;
+    background: var(--color-blue-60); color: var(--color-common-white);
+    font-size: 18px; line-height: 24px; font-weight: 500; text-decoration: none;
+  }
+  a.btn:hover { background: var(--color-blue-40); }
+
   kbd {
     display: inline-block; padding: 1px 7px; border-radius: 4px;
     border: 1px solid var(--color-cool-neutral-80);
@@ -121,13 +137,22 @@
   </header>
 
   <section>
+    <div class="get">
+      <a class="btn" href="loungex-product-asset.zip" download>플러그인 내려받기</a>
+      <div class="why">
+        늘 최신 버전입니다. 슬랙에서 받은 오래된 파일 대신 여기서 받아주세요.
+      </div>
+    </div>
+  </section>
+
+  <section>
     <h2>먼저 확인</h2>
     <div class="note">
       <b>Figma 데스크톱 앱을 먼저 설치해주세요.</b> 브라우저에서 연 Figma로는 이 플러그인을
       쓰실 수 없습니다. 앱이 없으시면 <a href="https://www.figma.com/downloads/">figma.com/downloads</a>
       에서 받아주세요.
     </div>
-    <p>슬랙에서 받은 <b>loungex-product-asset.zip</b> 을 준비해주세요.</p>
+    <p>위에서 <b>loungex-product-asset.zip</b> 을 받아주세요.</p>
   </section>
 
   <section>
@@ -193,7 +218,7 @@
 
   <section>
     <h2>새 버전이 오면</h2>
-    <p>슬랙으로 새 zip 을 받으시면, 풀어서 <b>기존 폴더에 덮어써주세요.</b></p>
+    <p>이 페이지 맨 위에서 zip 을 다시 받아, 풀어서 <b>기존 폴더에 덮어써주세요.</b></p>
     <div class="note">
       폴더 위치만 그대로면 <b>다시 설치하지 않아도 됩니다.</b> Figma 는 실행할 때마다 그 폴더의
       파일을 새로 읽습니다. 덮어쓴 뒤 플러그인 창을 닫았다 다시 실행해주세요.
@@ -224,7 +249,7 @@
       <dd>폴더를 옮기거나 지우셨을 수 있습니다. 위 설치 과정을 처음부터 다시 해주세요.</dd>
 
       <dt>고쳤다는데 그대로입니다</dt>
-      <dd>플러그인 창을 닫았다가 다시 실행해주세요. 그래도 그대로면 새 zip 을 기존 폴더에 제대로 덮어썼는지 확인해주세요.</dd>
+      <dd>플러그인 창을 닫았다가 다시 실행해주세요. 그래도 그대로면 이 페이지에서 zip 을 다시 받아 기존 폴더에 덮어써주세요.</dd>
 
       <dt>넣을 컴포넌트가 목록에 안 뜹니다</dt>
       <dd>위쪽 <b>페이지</b> 드롭다운을 확인해주세요. 지금 열려 있는 페이지로 맞춰져 있으니, 다른 페이지에 있으면 그 페이지를 고르시거나 <b>모든 페이지</b>로 바꿔주세요.</dd>

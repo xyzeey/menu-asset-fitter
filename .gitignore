@@ -1,7 +1,6 @@
-# 플러그인 소스는 공유 드라이브로 배포한다. 설치 안내(install.html)만 링크용으로 올린다.
+# 플러그인 소스 폴더는 올리지 않는다. 배포용 zip 만 안내 페이지에서 받게 한다.
 loungex-product-asset/
 loungex-menu-asset/
-*.zip
 
 # 빌드 산출물 (claude.ai 아티팩트용)
 dist/
