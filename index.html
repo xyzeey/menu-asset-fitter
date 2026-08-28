@@ -335,6 +335,32 @@ h1 {
   align-items: stretch;
 }
 
+/* ---------- 앱·키오스크 미리보기 ---------- */
+
+#preview { display: flex; flex-direction: column; gap: var(--space-4); }
+#preview h2 {
+  margin: 0;
+  font-size: var(--type-title-3-size);
+  line-height: var(--type-title-3-lh);
+  font-weight: var(--type-title-3-weight);
+  letter-spacing: -0.01em;
+}
+
+.screens { display: flex; flex-direction: column; gap: var(--space-5); }
+.screen { display: flex; flex-direction: column; gap: 6px; }
+.screen .cap {
+  font-size: var(--type-detail-1-size);
+  line-height: var(--type-detail-1-lh);
+  color: var(--semantic-label-gray-alternative);
+}
+/* 넓은 화면은 가로로만 스크롤시킨다 */
+.screen .hold {
+  overflow-x: auto;
+  border-radius: var(--radius-2);
+  border: 1px solid var(--semantic-border-normal);
+}
+.screen canvas { display: block; }
+
 /* ---------- 버튼 ---------- */
 /* BarisON 파일의 button 컴포넌트(node 21:502)를 그대로 옮긴 것.
    size L/M/S · type primary/secondary/dark/danger · ghost · disabled
@@ -484,6 +510,11 @@ body.nosave .side .btn:first-of-type { display: none; }
       <span class="cbx-box" aria-hidden="true"></span>
       <span class="cbx-label">영역 표시</span>
     </label>
+    <label class="cbx">
+      <input type="checkbox" id="mock" checked>
+      <span class="cbx-box" aria-hidden="true"></span>
+      <span class="cbx-label">앱·키오스크 미리보기</span>
+    </label>
   </div>
 
   <div class="tally" id="tally" hidden>
@@ -496,6 +527,11 @@ body.nosave .side .btn:first-of-type { display: none; }
   <div id="list">
     <div class="drop-hint">아직 넣은 이미지가 없습니다</div>
   </div>
+
+  <section id="preview" hidden>
+    <h2>실제 화면에서</h2>
+    <div class="screens" id="screens"></div>
+  </section>
 </div>
 
 <div class="dock">
@@ -514,6 +550,31 @@ const CANVAS = 120;
 const AREA = { x: 12, y: 22, w: 96, h: 78 };
 const ALPHA_T = 8;      // 이보다 불투명하면 내용으로 본다
 
+/* 실제 앱·키오스크 메뉴 카드 치수 (Lounge-X MENU 파일에서 읽은 값) */
+const SCREEN_BG = "#17191C";
+const TILE_BG = "#23252A";
+const APP = {
+  w: 342, h: 100, thumb: 100, radius: 8, gap: 16,   // 카드 하나
+  screen: 390, padX: 24, padY: 12, rowGap: 24,      // 목록 화면
+  scale: 1
+};
+const KIOSK = {
+  w: 220, h: 294, image: 220, pad: 8, radius: 12, gap: 12,   // 타일 하나
+  box: 62,                                                   // 이름·가격 칸
+  cols: 4, colGap: 24, rowGap: 32, margin: 24,               // 격자
+  scale: 0.62
+};
+const PREVIEW_MAX = 8;   // 미리보기에 그릴 최대 장수
+
+/* Best 배지 — 앱은 이름 위, 키오스크는 이미지 위 왼쪽 상단에 얹힌다 */
+const BADGE = {
+  label: "Best",
+  bg: "#2E1C05",
+  fg: "#FFC466",
+  app:   { h: 15, font: 10, padX: 6, radius: 4, x: 0,  y: 5 },
+  kiosk: { h: 30, font: 20, padX: 7, radius: 4, x: 8,  y: 8 }
+};
+
 const $ = (s) => document.querySelector(s);
 const listEl = $("#list");
 const dropEl = $("#drop");
@@ -521,6 +582,7 @@ const dropEl = $("#drop");
 let shots = [];
 const scale = 4;    // 480 = 120 x 4
 let showGuide = true;
+let showMock = true;
 let seq = 0;
 let saver = null;      // claude.use("downloads") 결과, 없으면 링크로 저장
 
@@ -697,6 +759,177 @@ function paint(cv, shot, px, guide) {
   }
 }
 
+/* 규격에 맞춘 결과를, 120 캔버스가 size 픽셀이 된다고 보고 (x,y) 에 그린다 */
+function drawAsset(g, shot, x, y, size) {
+  if (!shot.bbox || !shot.bmp) return;
+  const k = size / CANVAS;
+  const s = Math.min(AREA.w / shot.bbox.w, AREA.h / shot.bbox.h);
+  const rx = AREA.x + AREA.w / 2 - s * (shot.bbox.x + shot.bbox.w / 2);
+  const ry = AREA.y + AREA.h / 2 - s * (shot.bbox.y + shot.bbox.h / 2);
+  g.drawImage(shot.bmp, x + rx * k, y + ry * k, shot.imgW * s * k, shot.imgH * s * k);
+}
+
+function roundRect(g, x, y, w, h, r) {
+  g.beginPath();
+  g.moveTo(x + r, y);
+  g.arcTo(x + w, y, x + w, y + h, r);
+  g.arcTo(x + w, y + h, x, y + h, r);
+  g.arcTo(x, y + h, x, y, r);
+  g.arcTo(x, y, x + w, y, r);
+  g.closePath();
+}
+
+const FONT = '"Pretendard Variable", Pretendard, sans-serif';
+
+function setupCanvas(cv, w, h, scale) {
+  const dpr = 2;
+  cv.width = Math.round(w * scale * dpr);
+  cv.height = Math.round(h * scale * dpr);
+  cv.style.width = Math.round(w * scale) + "px";
+  cv.style.height = Math.round(h * scale) + "px";
+  const g = cv.getContext("2d");
+  g.scale(scale * dpr, scale * dpr);
+  g.fillStyle = SCREEN_BG;
+  g.fillRect(0, 0, w, h);
+  return g;
+}
+
+function shortName(shot) {
+  const base = shot.file.replace(/\.[^.]+$/, "");
+  return base.length > 16 ? base.slice(0, 15) + "…" : base;
+}
+
+/* 글자 폭을 재서 알약 크기를 맞춘다 */
+function drawBadge(g, x, y, spec) {
+  g.font = '600 ' + spec.font + 'px ' + FONT;
+  const tw = g.measureText(BADGE.label).width;
+  const w = tw + spec.padX * 2;
+
+  g.fillStyle = BADGE.bg;
+  roundRect(g, x, y, w, spec.h, spec.radius);
+  g.fill();
+
+  g.fillStyle = BADGE.fg;
+  g.textBaseline = "middle";
+  g.fillText(BADGE.label, x + spec.padX, y + spec.h / 2 + 0.5);
+  g.textBaseline = "alphabetic";
+  return w;
+}
+
+/* 앱 목록 카드 한 줄 — 썸네일 100 + 배지·이름·가격 */
+function appCard(g, shot, ox, oy) {
+  g.fillStyle = TILE_BG;
+  roundRect(g, ox, oy, APP.thumb, APP.thumb, APP.radius);
+  g.fill();
+
+  g.save();
+  roundRect(g, ox, oy, APP.thumb, APP.thumb, APP.radius);
+  g.clip();
+  drawAsset(g, shot, ox, oy, APP.thumb);
+  g.restore();
+
+  const x = ox + APP.thumb + APP.gap;
+  drawBadge(g, x + BADGE.app.x, oy + BADGE.app.y, BADGE.app);
+
+  g.textBaseline = "alphabetic";
+  g.fillStyle = "#F9FAFA";
+  g.font = '600 16px ' + FONT;
+  g.fillText(shortName(shot), x, oy + 44);
+
+  g.fillStyle = "#93989F";
+  g.font = '500 12px ' + FONT;
+  g.fillText("Product Name", x, oy + 64);
+
+  g.fillStyle = "#F9FAFA";
+  g.font = '600 14px ' + FONT;
+  g.fillText("0,000원", x, oy + 91);
+}
+
+/* 키오스크 메뉴 타일 하나 — 이미지 220 + 이름·가격 */
+function kioskTile(g, shot, ox, oy) {
+  g.fillStyle = TILE_BG;
+  roundRect(g, ox, oy, KIOSK.image, KIOSK.image, KIOSK.radius);
+  g.fill();
+
+  const inner = KIOSK.image - KIOSK.pad * 2;
+  g.save();
+  roundRect(g, ox, oy, KIOSK.image, KIOSK.image, KIOSK.radius);
+  g.clip();
+  drawAsset(g, shot, ox + KIOSK.pad, oy + KIOSK.pad, inner);
+  g.restore();
+
+  drawBadge(g, ox + BADGE.kiosk.x, oy + BADGE.kiosk.y, BADGE.kiosk);
+
+  // 이름·가격 칸 — typography token 적용 후 값
+  const y = oy + KIOSK.image + KIOSK.gap;
+  g.textBaseline = "alphabetic";
+
+  g.fillStyle = "#F9FAFA";
+  g.font = '500 22px ' + FONT;          // Medium 22 / 줄높이 28
+  g.fillText(shortName(shot), ox, y + 21);
+
+  g.fillStyle = "#F9FAFA";
+  g.font = '600 24px ' + FONT;          // SemiBold 24 / 줄높이 32
+  g.fillText("0,000", ox, y + 54);
+}
+
+/* 앱 목록 화면 — 넣은 이미지를 세로로 쌓는다 */
+function drawAppScreen(cv, list) {
+  const n = list.length;
+  const h = APP.padY * 2 + n * APP.h + (n - 1) * APP.rowGap;
+  const g = setupCanvas(cv, APP.screen, h, APP.scale);
+  list.forEach((shot, i) => {
+    appCard(g, shot, APP.padX, APP.padY + i * (APP.h + APP.rowGap));
+  });
+}
+
+/* 키오스크 메뉴 격자 — 한 줄에 4개 */
+function drawKioskScreen(cv, list) {
+  const rows = Math.ceil(list.length / KIOSK.cols);
+  const w = KIOSK.margin * 2 + KIOSK.cols * KIOSK.w + (KIOSK.cols - 1) * KIOSK.colGap;
+  const h = KIOSK.margin * 2 + rows * KIOSK.h + (rows - 1) * KIOSK.rowGap;
+  const g = setupCanvas(cv, w, h, KIOSK.scale);
+  list.forEach((shot, i) => {
+    const c = i % KIOSK.cols, r = Math.floor(i / KIOSK.cols);
+    kioskTile(g, shot,
+      KIOSK.margin + c * (KIOSK.w + KIOSK.colGap),
+      KIOSK.margin + r * (KIOSK.h + KIOSK.rowGap));
+  });
+}
+
+function drawPreview() {
+  const sec = $("#preview");
+  const box = $("#screens");
+  const list = shots.filter(s => s.bbox).slice(0, PREVIEW_MAX);
+
+  if (!showMock || !list.length) { sec.hidden = true; box.innerHTML = ""; return; }
+  sec.hidden = false;
+  box.innerHTML = "";
+
+  const more = shots.filter(s => s.bbox).length - list.length;
+  for (const [label, note, fn] of [
+    ["앱 목록", `390 × ${APP.h} 카드`, drawAppScreen],
+    ["키오스크", `${KIOSK.w} × ${KIOSK.h} 타일 · 한 줄에 ${KIOSK.cols}개`, drawKioskScreen]
+  ]) {
+    const one = document.createElement("div");
+    one.className = "screen";
+
+    const cap = document.createElement("div");
+    cap.className = "cap";
+    cap.textContent = `${label} · ${note}` + (more > 0 ? ` · 처음 ${PREVIEW_MAX}장만` : "");
+    one.appendChild(cap);
+
+    const hold = document.createElement("div");
+    hold.className = "hold";
+    const cv = document.createElement("canvas");
+    fn(cv, list);
+    hold.appendChild(cv);
+    one.appendChild(hold);
+
+    box.appendChild(one);
+  }
+}
+
 function render(shot) {
   const px = CANVAS * scale;
   const cv = document.createElement("canvas");
@@ -718,11 +951,13 @@ function draw() {
     listEl.innerHTML = '<div class="drop-hint">아직 넣은 이미지가 없습니다</div>';
     $("#tally").hidden = true;
     tally();
+    drawPreview();
     return;
   }
   $("#tally").hidden = false;
   shots.forEach((shot) => listEl.appendChild(card(shot)));
   tally();
+  drawPreview();
 }
 
 const LEVEL_TEXT = { ok: "통과", warn: "경고", bad: "오류" };
@@ -861,6 +1096,16 @@ $("#guide").addEventListener("change", (e) => {
   showGuide = e.target.checked;
   draw();
 });
+
+$("#mock").addEventListener("change", (e) => {
+  showMock = e.target.checked;
+  draw();
+});
+
+// 글꼴이 늦게 올라오면 미리보기 글자가 기본 글꼴로 그려진다. 다 오면 다시 그린다.
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => { if (shots.length) draw(); });
+}
 
 $("#clear").addEventListener("click", () => { shots = []; draw(); });
 

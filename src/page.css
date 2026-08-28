@@ -326,6 +326,32 @@ h1 {
   align-items: stretch;
 }
 
+/* ---------- 앱·키오스크 미리보기 ---------- */
+
+#preview { display: flex; flex-direction: column; gap: var(--space-4); }
+#preview h2 {
+  margin: 0;
+  font-size: var(--type-title-3-size);
+  line-height: var(--type-title-3-lh);
+  font-weight: var(--type-title-3-weight);
+  letter-spacing: -0.01em;
+}
+
+.screens { display: flex; flex-direction: column; gap: var(--space-5); }
+.screen { display: flex; flex-direction: column; gap: 6px; }
+.screen .cap {
+  font-size: var(--type-detail-1-size);
+  line-height: var(--type-detail-1-lh);
+  color: var(--semantic-label-gray-alternative);
+}
+/* 넓은 화면은 가로로만 스크롤시킨다 */
+.screen .hold {
+  overflow-x: auto;
+  border-radius: var(--radius-2);
+  border: 1px solid var(--semantic-border-normal);
+}
+.screen canvas { display: block; }
+
 /* ---------- 버튼 ---------- */
 /* BarisON 파일의 button 컴포넌트(node 21:502)를 그대로 옮긴 것.
    size L/M/S · type primary/secondary/dark/danger · ghost · disabled
